@@ -12,7 +12,7 @@
         <div>
             {% if user.is_authenticated %}
                 <span class="me-3">Welcome, {{ user.username }}!</span>
-                <a class="btn btn-outline-primary me-2" href="{% url 'ask_question' %}">Ask</a>
+                <a class="btn btn-outline-primary me-2" href="{% url 'post_question' %}">Ask</a>
                 <a class="btn btn-outline-danger" href="{% url 'logout' %}">Logout</a>
             {% else %}
                 <a class="btn btn-outline-primary me-2" href="{% url 'login' %}">Login</a>
