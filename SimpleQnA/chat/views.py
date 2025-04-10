@@ -87,9 +87,14 @@ def question_detail(request, id):
 
 @login_required
 def like_answer(request, answer_id):
-    answer = get_object_or_404(Answer, id=answer_id)
-    if request.user in answer.likes.all():
+    try:
+        answer = Answer.objects.select_related('question').get(id=answer_id)
+    except Answer.DoesNotExist:
+        raise Http404("Answer not found.")
+
+    if answer.likes.filter(id=request.user.id).exists():
         answer.likes.remove(request.user)
     else:
         answer.likes.add(request.user)
+
     return redirect('question_detail', id=answer.question.id)
