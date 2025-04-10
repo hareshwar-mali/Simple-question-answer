@@ -6,11 +6,6 @@ from .forms import RegisterForm, QuestionForm, AnswerForm
 from .models import Question, Answer
 
 
-def home(request):
-    questions = Question.objects.all().order_by('-created_at')
-    return render(request, 'home.html', {'questions': questions})
-
-
 def register(request):
     if request.method == 'POST':
         form = RegisterForm(request.POST)
@@ -42,7 +37,13 @@ def logout_view(request):
 
 
 @login_required
-def ask_question(request):
+def home(request):
+    questions = Question.objects.all().order_by('-created_at')
+    return render(request, 'home.html', {'questions': questions})
+
+
+@login_required
+def post_question(request):
     if request.method == 'POST':
         form = QuestionForm(request.POST)
         if form.is_valid():
@@ -52,7 +53,7 @@ def ask_question(request):
             return redirect('home')
     else:
         form = QuestionForm()
-    return render(request, 'ask_question.html', {'form': form})
+    return render(request, 'post_question.html', {'form': form})
 
 
 @login_required
