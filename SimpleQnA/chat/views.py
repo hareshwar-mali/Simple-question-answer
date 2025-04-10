@@ -4,6 +4,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from .forms import RegisterForm, QuestionForm, AnswerForm
 from .models import Question, Answer
+from django.http import Http404
 
 
 def register(request):
@@ -58,8 +59,15 @@ def post_question(request):
 
 @login_required
 def question_detail(request, id):
-    question = get_object_or_404(Question, id=id)
-    answers = question.answers.all()
+    # Separate query for the question and answers
+    try:
+        question = Question.objects.select_related('user').get(id=id)
+    except Question.DoesNotExist:
+        raise Http404("Question not found.")
+
+    answers = Answer.objects.select_related('user').filter(question_id=id).order_by(
+        '-created_at')
+
     if request.method == 'POST':
         form = AnswerForm(request.POST)
         if form.is_valid():
